@@ -2,8 +2,6 @@ html, body {
     background-color: #f2f6fe !important;
 }
 
-footer{ min-height:50px; background:PapayaWhip; }
-
 body{
     display:flex;
     flex-direction:column;

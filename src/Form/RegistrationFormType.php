@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Profil;
 use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -18,7 +20,6 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email')
-
             ->add('pseudo')
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
@@ -36,6 +37,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+
         ;
     }
 

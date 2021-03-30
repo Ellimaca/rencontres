@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer ton profil{% endblock %}
+
+{% block body %}
+    {% for flashError in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+    {% endfor %}
+
+    <h1>Créer ton profil</h1>
+
+{{ form(profileForm) }}
+
+    <button type="submit" class="btn">Créer</button>
+
+{% endblock %}
