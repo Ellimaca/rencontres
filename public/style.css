@@ -1,3 +1,40 @@
-#nav_titre > i {
+html, body {
+    background-color: #f2f6fe !important;
+}
+
+footer{ min-height:50px; background:PapayaWhip; }
+
+body{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    margin:0;
+}
+
+footer{
+    margin-top:auto;
+}
+
+/* --------------------------------------- NAVIGATION --------------------------------------- */
+
+#nav_titre > h4 > i {
     margin-right: 10px;
+}
+
+#love_nav a {
+    color: #f2f6fe;
+    text-decoration: none;
+    transition: all 0.5s;
+}
+
+#love_nav {
+    background: #EC3C6C;
+}
+
+/* --------------------------------------- FOOTER --------------------------------------- */
+footer{
+    margin-top:auto;
+    min-height:50px;
+    background: #EC3C6C;
+    color: #f2f6fe;
 }
