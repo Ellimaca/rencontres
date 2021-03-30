@@ -16,7 +16,6 @@ class ProfilType extends AbstractType
             ->add('sexe')
             ->add('CodePostal')
             ->add('Ville')
-            ->add('user')
         ;
     }
 

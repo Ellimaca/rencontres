@@ -9,8 +9,8 @@
 
     <h1>Créer ton profil</h1>
 
-{{ form(profileForm) }}
-
+    {{ form_start(profileForm) }}
+    {{ form_widget(profileForm) }}
     <button type="submit" class="btn">Créer</button>
-
+    {{ form_end(profileForm) }}
 {% endblock %}
