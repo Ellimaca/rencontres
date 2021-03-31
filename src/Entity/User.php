@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -46,6 +48,16 @@ class User implements UserInterface
      * @ORM\JoinColumn(nullable=true)
      */
     private $profil;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PhotoProfil::class, mappedBy="user")
+     */
+    private $photoProfils;
+
+    public function __construct()
+    {
+        $this->photoProfils = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -148,6 +160,36 @@ class User implements UserInterface
     public function setProfil(Profil $profil): self
     {
         $this->profil = $profil;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PhotoProfil[]
+     */
+    public function getPhotoProfils(): Collection
+    {
+        return $this->photoProfils;
+    }
+
+    public function addPhotoProfil(PhotoProfil $photoProfil): self
+    {
+        if (!$this->photoProfils->contains($photoProfil)) {
+            $this->photoProfils[] = $photoProfil;
+            $photoProfil->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhotoProfil(PhotoProfil $photoProfil): self
+    {
+        if ($this->photoProfils->removeElement($photoProfil)) {
+            // set the owning side to null (unless already changed)
+            if ($photoProfil->getUser() === $this) {
+                $photoProfil->setUser(null);
+            }
+        }
 
         return $this;
     }

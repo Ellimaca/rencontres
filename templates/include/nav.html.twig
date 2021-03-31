@@ -17,15 +17,14 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
             </li>
-                {% if app.user.profil %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('profil_detail', {id: app.user.id }) }}">Profil</a>
+                        <a class="nav-link" href="{{ path('profil_profil') }}">Profil</a>
                     </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('profil_create') }}">Créer mon Profil</a>
-                        </li>
-                    {% endif %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('profil_ajoutPhoto') }}">Ajouter une photo</a>
+                    </li>
+
             {% else %}
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>

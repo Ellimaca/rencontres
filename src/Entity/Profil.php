@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ProfilRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -44,10 +42,6 @@ class Profil
      */
     private $user;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PhotoProfil::class, mappedBy="profil")
-     */
-    private $photosProfil;
 
     /**
      * @ORM\ManyToOne(targetEntity=Critere::class, inversedBy="profil")
@@ -59,10 +53,6 @@ class Profil
      */
     private $coeur;
 
-    public function __construct()
-    {
-        $this->photosProfil = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -130,36 +120,6 @@ class Profil
         }
 
         $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PhotoProfil[]
-     */
-    public function getPhotosProfil(): Collection
-    {
-        return $this->photosProfil;
-    }
-
-    public function addPhotosProfil(PhotoProfil $photosProfil): self
-    {
-        if (!$this->photosProfil->contains($photosProfil)) {
-            $this->photosProfil[] = $photosProfil;
-            $photosProfil->setProfil($this);
-        }
-
-        return $this;
-    }
-
-    public function removePhotosProfil(PhotoProfil $photosProfil): self
-    {
-        if ($this->photosProfil->removeElement($photosProfil)) {
-            // set the owning side to null (unless already changed)
-            if ($photosProfil->getProfil() === $this) {
-                $photosProfil->setProfil(null);
-            }
-        }
 
         return $this;
     }

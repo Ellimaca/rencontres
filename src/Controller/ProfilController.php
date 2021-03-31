@@ -2,16 +2,21 @@
 
 namespace App\Controller;
 
+use App\Entity\PhotoProfil;
 use App\Entity\Profil;
 use App\Entity\User;
+use App\Form\PhotoProfilType;
 use App\Form\ProfilType;
+use App\Repository\PhotoProfilRepository;
 use App\Repository\ProfilRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\ByteString;
 
 class ProfilController extends AbstractController
 {
@@ -65,11 +70,92 @@ class ProfilController extends AbstractController
      * @Route("/detail/{id}", name="profil_detail")
      */
 
-    public function detail(int $id, ProfilRepository $profilRepository) {
+    public function detail(int $id,
+                           ProfilRepository $profilRepository,
+                           PhotoProfilRepository $photoProfilRepository) {
+
+
 
         return $this->render('profil/detail.html.twig', [
             "profil" => $profilRepository->find($id)
         ]);
     }
+
+    /**
+     * @Route("/ajoutPhoto", name="profil_ajoutPhoto")
+     */
+
+    public function ajoutPhoto(Request $request, EntityManagerInterface $manager) {
+
+        //on récupère le user connecté
+        /** @var User $user */
+        $user = $this->getUser();
+
+        //on récupère l'id du profil de l'utilisateur connecté
+        $userProfilId = $user->getProfil()->getId();
+
+        //on instancie une photo de profil
+        $photoProfil = new PhotoProfil();
+
+        //création d'un formulaire pour ajouter la photo de profil !
+        $photoForm = $this->createForm(PhotoProfilType::class, $photoProfil);
+        $photoForm->handleRequest($request);
+
+        if($photoForm->isSubmitted() && $photoForm->isValid()) {
+
+            /** @var UploadedFile $telechargementPhoto */
+            $telechargementPhoto = $photoForm->get('file')->getData();
+            $nouveauNomPhoto = ByteString::fromRandom(30). '.' .$telechargementPhoto->guessExtension();
+
+            try {
+                $telechargementPhoto->move(__DIR__.'/../../public/profile/img', $nouveauNomPhoto);
+            } catch(\Exception $e) {
+                dd($e->getMessage());
+            }
+
+            $photoProfil->setDateCreation(new \DateTime());
+            $photoProfil->setUser($user);
+            $photoProfil->setNomFichier($nouveauNomPhoto);
+
+            $manager->persist($photoProfil);
+            $manager->flush();
+
+            return $this->redirectToRoute('profil_detail', ['id' => $userProfilId]);
+        }
+
+        return $this->render('profil/ajoutPhoto.html.twig', [
+            'photoForm' => $photoForm->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/profil", name="profil_profil")
+     */
+
+    public function profil(){
+
+        //on récupère le user connecté
+        /** @var User $user */
+        $user = $this->getUser();
+
+        //on récupère l'id du profil de l'utilisateur connecté
+        $userProfilId = $user->getProfil()->getId();
+
+        //si l'utilisateur a déjà un profil, on le redirige vers le détail deson profil
+        if($user->getProfil()) {
+            return $this->redirectToRoute('profil_detail', ['id' => $userProfilId]);
+
+        //sinon on le redirige vers la page de création de profil !
+        } else {
+            return $this->redirectToRoute('profil_create');
+
+        }
+
+
+
+
+    }
+
+
 
 }

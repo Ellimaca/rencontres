@@ -3,7 +3,15 @@
 {% block title %}Détail{% endblock %}
 
 {% block body %}
-    <div>Ville : {{ profil.ville }}</div>
+
     <div>Pseudo : {{ app.user.pseudo }}</div>
+    <div>Date de naissance : {{ profil.dateNaissance|date('d/m/Y') }}</div>
+    <div>Sexe : {{ profil.sexe }}</div>
+    <div>Ville : {{ profil.ville }}</div>
+    <div>Code Postal : {{ profil.codePostal }}</div>
+
+    {% for photo in app.user.photoProfils %}
+        <img alt="photo" src="../profile/img/{{ photo.nomFichier }}">
+    {% endfor %}
 
 {% endblock %}
