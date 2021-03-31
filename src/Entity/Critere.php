@@ -35,13 +35,13 @@ class Critere
     private $ageRecherches;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="critere")
+     * @ORM\OneToMany(targetEntity=Profil::class, mappedBy="criteres")
      */
-    private $users;
+    private $profils;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->profils = new ArrayCollection();
     }
 
 
@@ -87,30 +87,34 @@ class Critere
     }
 
     /**
-     * @return Collection|User[]
+     * @return Collection|Profil[]
      */
-    public function getUsers(): Collection
+    public function getProfils(): Collection
     {
-        return $this->users;
+        return $this->profils;
     }
 
-    public function addUser(User $user): self
+    public function addProfil(Profil $profil): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->addCritere($this);
+        if (!$this->profils->contains($profil)) {
+            $this->profils[] = $profil;
+            $profil->setCriteres($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeProfil(Profil $profil): self
     {
-        if ($this->users->removeElement($user)) {
-            $user->removeCritere($this);
+        if ($this->profils->removeElement($profil)) {
+            // set the owning side to null (unless already changed)
+            if ($profil->getCriteres() === $this) {
+                $profil->setCriteres(null);
+            }
         }
 
         return $this;
     }
+
 
 }

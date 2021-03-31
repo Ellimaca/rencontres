@@ -44,26 +44,10 @@ class User implements UserInterface
     private $Pseudo;
 
     /**
-     * @ORM\OneToOne(targetEntity=Profil::class, inversedBy="user", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\OneToOne(targetEntity=Profil::class, mappedBy="user", cascade={"persist", "remove"})
      */
     private $profil;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PhotoProfil::class, mappedBy="user")
-     */
-    private $photoProfils;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Critere::class, inversedBy="users")
-     */
-    private $critere;
-
-    public function __construct()
-    {
-        $this->photoProfils = new ArrayCollection();
-        $this->critere = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -165,61 +149,12 @@ class User implements UserInterface
 
     public function setProfil(Profil $profil): self
     {
+        // set the owning side of the relation if necessary
+        if ($profil->getUser() !== $this) {
+            $profil->setUser($this);
+        }
+
         $this->profil = $profil;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PhotoProfil[]
-     */
-    public function getPhotoProfils(): Collection
-    {
-        return $this->photoProfils;
-    }
-
-    public function addPhotoProfil(PhotoProfil $photoProfil): self
-    {
-        if (!$this->photoProfils->contains($photoProfil)) {
-            $this->photoProfils[] = $photoProfil;
-            $photoProfil->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePhotoProfil(PhotoProfil $photoProfil): self
-    {
-        if ($this->photoProfils->removeElement($photoProfil)) {
-            // set the owning side to null (unless already changed)
-            if ($photoProfil->getUser() === $this) {
-                $photoProfil->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Critere[]
-     */
-    public function getCritere(): Collection
-    {
-        return $this->critere;
-    }
-
-    public function addCritere(Critere $critere): self
-    {
-        if (!$this->critere->contains($critere)) {
-            $this->critere[] = $critere;
-        }
-
-        return $this;
-    }
-
-    public function removeCritere(Critere $critere): self
-    {
-        $this->critere->removeElement($critere);
 
         return $this;
     }

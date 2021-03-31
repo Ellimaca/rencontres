@@ -11,20 +11,22 @@
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
-    </div>
     <div class="col collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
         <ul class="nav">
             {% if app.user %}
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
-            </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('profil_profil') }}">Profil</a>
+                        <a class="nav-link" href="{{ path('profil_controller') }}">Profil</a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('profil_ajoutPhoto') }}">Ajouter une photo</a>
-                    </li>
+                {% if app.user.profil %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('profil_suggestions') }}">Mes suggestions</a>
+                </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
+                </li>
 
             {% else %}
             <li class="nav-item">

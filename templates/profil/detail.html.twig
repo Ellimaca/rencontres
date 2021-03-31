@@ -10,7 +10,7 @@
     <div>Ville : {{ profil.ville }}</div>
     <div>Code Postal : {{ profil.codePostal }}</div>
 
-    {% for photo in app.user.photoProfils %}
+    {% for photo in app.user.profil.photoProfils %}
         <img alt="photo" src="../profile/img/{{ photo.nomFichier }}">
     {% endfor %}
 

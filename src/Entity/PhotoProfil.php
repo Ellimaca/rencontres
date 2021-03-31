@@ -28,9 +28,11 @@ class PhotoProfil
     private $dateCreation;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="photoProfils")
+     * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="PhotoProfils")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private $profil;
+
 
 
     public function getId(): ?int
@@ -62,16 +64,17 @@ class PhotoProfil
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getProfil(): ?Profil
     {
-        return $this->user;
+        return $this->profil;
     }
 
-    public function setUser(?User $user): self
+    public function setProfil(?Profil $profil): self
     {
-        $this->user = $user;
+        $this->profil = $profil;
 
         return $this;
     }
+
 
 }

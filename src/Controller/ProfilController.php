@@ -26,7 +26,8 @@ class ProfilController extends AbstractController
      * @Route("/create", name="profil_create")
      */
     public function create(Request $request,
-                           EntityManagerInterface $manager, UserRepository $userRepository): Response
+                           EntityManagerInterface $manager,
+                           UserRepository $userRepository): Response
     {
 
         // Récupère l'utilisateur connecté
@@ -72,11 +73,7 @@ class ProfilController extends AbstractController
      * @Route("/detail/{id}", name="profil_detail")
      */
 
-    public function detail(int $id,
-                           ProfilRepository $profilRepository,
-                           PhotoProfilRepository $photoProfilRepository) {
-
-
+    public function detail(int $id, ProfilRepository $profilRepository) {
 
         return $this->render('profil/detail.html.twig', [
             "profil" => $profilRepository->find($id)
@@ -92,9 +89,6 @@ class ProfilController extends AbstractController
         //on récupère le user connecté
         /** @var User $user */
         $user = $this->getUser();
-
-        //on récupère l'id du profil de l'utilisateur connecté
-        $userProfilId = $user->getProfil()->getId();
 
         //on instancie une photo de profil
         $photoProfil = new PhotoProfil();
@@ -116,11 +110,17 @@ class ProfilController extends AbstractController
             }
 
             $photoProfil->setDateCreation(new \DateTime());
-            $photoProfil->setUser($user);
+            $photoProfil->setProfil($user->getProfil());
             $photoProfil->setNomFichier($nouveauNomPhoto);
 
             $manager->persist($photoProfil);
             $manager->flush();
+
+            $this->addFlash('success', 'Merci pour la/les photo(s)! ');
+
+            if($user->getProfil()->getCriteres()) {
+                return $this->redirectToRoute('profil_detail', ['$user->getProfil()->getId()']);
+            }
 
             return $this->redirectToRoute('profil_critere');
         }
@@ -136,30 +136,34 @@ class ProfilController extends AbstractController
 
     public function critere(Request $request, EntityManagerInterface $entityManager) {
 
+        /** @var User $user */
         $user = $this->getUser();
-
 
         $critere = new Critere();
         $critereForm = $this->createForm(CritereType::class, $critere);
         $critereForm->handleRequest($request);
 
         if ($critereForm->isSubmitted() && $critereForm->isValid()) {
-               $critere->addUser($user);
+                $critere->addProfil($user->getProfil());
                $entityManager->persist($critere);
                $entityManager->flush();
+
+               $this->addFlash('success', 'Critères bien ajoutés à votre profil ! ');
+               return $this->redirectToRoute('main_home');
         }
 
-        return $this->render('profil/ajoutCritère.html.twig', [
+        return $this->render('profil/ajoutCritere.html.twig', [
             'critereForm' => $critereForm->createView()
         ]);
     }
 
 
+    //Controler si l'utilisateur connecté à un profil ou non afin de le rediriger vers les bonnes pages.
     /**
-     * @Route("/profil", name="profil_profil")
+     * @Route("/profil", name="profil_controller")
      */
 
-    public function profil(){
+    public function profilController(){
 
         //on récupère le user connecté
         /** @var User $user */
@@ -176,8 +180,46 @@ class ProfilController extends AbstractController
             return $this->redirectToRoute('profil_create');
         }
 
+    }
+
+    /**
+     * @Route("/suggestions", name="profil_suggestions")
+     */
+
+    public function suggestions(ProfilRepository $profilRepository){
+
+        //on récupère le user connecté
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $userId = $user->getProfil()->getId();
+
+        if($user->getProfil()->getCriteres()){
+            //on récupère les critères de l'utilisateur connecté
+            $criteresUtilisateur = $profilRepository->find($userId);
+
+            //on récupère les critères de tout le monde
+            $criteresCorrespondants = $profilRepository->findBy(
+                ['sexe' => $criteresUtilisateur->getCriteres()->getSexesRecherches(),
+                    'CodePostal' => $criteresUtilisateur->getCriteres()->getDepartementsRecherches(),
+                    /*'dateNaissance' => $criteresUtilisateur->getCriteres()->getAgeRecherches()*/
+                ]);
+
+            if($criteresCorrespondants) {
+                return $this->render('profil/suggestions.html.twig', [
+                    'criteresCorrespondants' => $criteresCorrespondants
+                    ]);
+            } else {
+                $this->addFlash('warning', "Désolé, vous n'avez aucune suggestion");
+            }
 
 
+        } else {
+            $this->addFlash('warning', "Vous n'avez pas de suggestions, veuillez renseigner vos critères");
+            return $this->redirectToRoute('profil_critere');
+        }
+
+        return $this->render('profil/suggestions.html.twig');
 
     }
 

@@ -19,6 +19,22 @@ class ProfilRepository extends ServiceEntityRepository
         parent::__construct($registry, Profil::class);
     }
 
+    public function calculAgeSelonDateDeNaissance($critereAgeRecherche) {
+
+    $queryBuilder = $this->createQueryBuilder('p');
+
+    $queryBuilder->select('p','YEAR(CURDATE()) - YEAR(date_naissance) AS age')
+                 ->where('p.age = ?' );
+
+    $query = $queryBuilder->getQuery();
+
+    $result = $query->getResult();
+
+    return $result;
+
+
+    }
+
     // /**
     //  * @return Profil[] Returns an array of Profil objects
     //  */

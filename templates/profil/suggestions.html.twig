@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Mes suggestions</h1>
+
+    {% for profil in criteresCorrespondants %}
+        <p>{{ profil.user.pseudo }}</p>
+    {% endfor %}
+
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

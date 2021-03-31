@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProfilRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,15 +40,30 @@ class Profil
     private $Ville;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, mappedBy="profil", cascade={"persist", "remove"})
-     */
-    private $user;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     private $coeur;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, inversedBy="profil", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PhotoProfil::class, mappedBy="profil")
+     */
+    private $PhotoProfils;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Critere::class, inversedBy="profils")
+     */
+    private $criteres;
+
+    public function __construct()
+    {
+        $this->PhotoProfils = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -101,22 +118,6 @@ class Profil
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): self
-    {
-        // set the owning side of the relation if necessary
-        if ($user->getProfil() !== $this) {
-            $user->setProfil($this);
-        }
-
-        $this->user = $user;
-
-        return $this;
-    }
 
     public function getCoeur(): ?bool
     {
@@ -129,4 +130,59 @@ class Profil
 
         return $this;
     }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PhotoProfil[]
+     */
+    public function getPhotoProfils(): Collection
+    {
+        return $this->PhotoProfils;
+    }
+
+    public function addPhotoProfil(PhotoProfil $photoProfil): self
+    {
+        if (!$this->PhotoProfils->contains($photoProfil)) {
+            $this->PhotoProfils[] = $photoProfil;
+            $photoProfil->setProfil($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhotoProfil(PhotoProfil $photoProfil): self
+    {
+        if ($this->PhotoProfils->removeElement($photoProfil)) {
+            // set the owning side to null (unless already changed)
+            if ($photoProfil->getProfil() === $this) {
+                $photoProfil->setProfil(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCriteres(): ?Critere
+    {
+        return $this->criteres;
+    }
+
+    public function setCriteres(?Critere $criteres): self
+    {
+        $this->criteres = $criteres;
+
+        return $this;
+    }
+    
 }

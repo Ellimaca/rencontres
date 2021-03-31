@@ -15,7 +15,7 @@ class AppFixtures extends Fixture
         //crée notre faker pour générer de belles données aléatoires en français !
         $faker = \Faker\Factory::create("fr_FR");
 
-        for($i = 0; $i < 100; $i++) {
+        for($i = 0; $i < 500; $i++) {
 
             //on instancie nos 3 objets
             $profil = new Profil();
