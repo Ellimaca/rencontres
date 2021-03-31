@@ -42,12 +42,6 @@ class Profil
      */
     private $user;
 
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Critere::class, inversedBy="profil")
-     */
-    private $criteres;
-
     /**
      * @ORM\Column(type="boolean")
      */
@@ -120,18 +114,6 @@ class Profil
         }
 
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getCriteres(): ?Critere
-    {
-        return $this->criteres;
-    }
-
-    public function setCriteres(?Critere $criteres): self
-    {
-        $this->criteres = $criteres;
 
         return $this;
     }

@@ -54,9 +54,15 @@ class User implements UserInterface
      */
     private $photoProfils;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Critere::class, inversedBy="users")
+     */
+    private $critere;
+
     public function __construct()
     {
         $this->photoProfils = new ArrayCollection();
+        $this->critere = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +196,30 @@ class User implements UserInterface
                 $photoProfil->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Critere[]
+     */
+    public function getCritere(): Collection
+    {
+        return $this->critere;
+    }
+
+    public function addCritere(Critere $critere): self
+    {
+        if (!$this->critere->contains($critere)) {
+            $this->critere[] = $critere;
+        }
+
+        return $this;
+    }
+
+    public function removeCritere(Critere $critere): self
+    {
+        $this->critere->removeElement($critere);
 
         return $this;
     }

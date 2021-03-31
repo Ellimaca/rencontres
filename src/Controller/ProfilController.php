@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Critere;
 use App\Entity\PhotoProfil;
 use App\Entity\Profil;
 use App\Entity\User;
+use App\Form\CritereType;
 use App\Form\PhotoProfilType;
 use App\Form\ProfilType;
 use App\Repository\PhotoProfilRepository;
@@ -55,7 +57,7 @@ class ProfilController extends AbstractController
                 $manager->flush();
 
                 $this->addFlash('success', 'Bienvenue chez LoveNest ! ');
-                return $this->redirectToRoute('main_home');
+                return $this->redirectToRoute('profil_ajoutPhoto');
 
             }
 
@@ -120,13 +122,38 @@ class ProfilController extends AbstractController
             $manager->persist($photoProfil);
             $manager->flush();
 
-            return $this->redirectToRoute('profil_detail', ['id' => $userProfilId]);
+            return $this->redirectToRoute('profil_critere');
         }
 
         return $this->render('profil/ajoutPhoto.html.twig', [
             'photoForm' => $photoForm->createView()
         ]);
     }
+
+    /**
+     * @Route("/critere", name="profil_critere")
+     */
+
+    public function critere(Request $request, EntityManagerInterface $entityManager) {
+
+        $user = $this->getUser();
+
+
+        $critere = new Critere();
+        $critereForm = $this->createForm(CritereType::class, $critere);
+        $critereForm->handleRequest($request);
+
+        if ($critereForm->isSubmitted() && $critereForm->isValid()) {
+               $critere->addUser($user);
+               $entityManager->persist($critere);
+               $entityManager->flush();
+        }
+
+        return $this->render('profil/ajoutCritère.html.twig', [
+            'critereForm' => $critereForm->createView()
+        ]);
+    }
+
 
     /**
      * @Route("/profil", name="profil_profil")
@@ -138,17 +165,15 @@ class ProfilController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        //on récupère l'id du profil de l'utilisateur connecté
-        $userProfilId = $user->getProfil()->getId();
-
         //si l'utilisateur a déjà un profil, on le redirige vers le détail deson profil
         if($user->getProfil()) {
+            //on récupère l'id du profil de l'utilisateur connecté
+            $userProfilId = $user->getProfil()->getId();
             return $this->redirectToRoute('profil_detail', ['id' => $userProfilId]);
 
         //sinon on le redirige vers la page de création de profil !
         } else {
             return $this->redirectToRoute('profil_create');
-
         }
 
 

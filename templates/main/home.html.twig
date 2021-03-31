@@ -2,4 +2,14 @@
 
 {% block title %}Accueil!{% endblock %}
 
-{% block main %}<div>Test</div>{% endblock %}
+{% block body %}
+    <section id="love_img" class="col-12">
+        <div id="love_div" class="container d-flex justify-content-center flex-column">
+            <h1 class="text-center text-white">Le meilleur site de rencontre !</h1>
+            <article>
+                <p id="lov_accueil_p" class="p-4">Dignitates quam semper atque in et quem exagitabat sit ire quam inopia enim ultimum et saevum causam quem praefectus ea praefectus sit ultimum praetorio ad feritas compellebatur coalito ire satisfaceret in discrimen ea ad compellebatur ob semper saevum simul inopia enim semper semper asperum convectio impedita feritas annonae asperum et impedita coalito more inopia praetorio quem ad ordinarias ut semper quem compellebatur semper enim praetorio exagitabat ad quem ad annonae asperum ea simul ipse impedita enim praefectus discrimen ut est impedita convectio tempestate ordinarias satisfaceret praefectus simul quem Rufinus praetorio et enim ad trusus inopia coalito ire saevum alioqui et.</p>
+                <a id="lov_accueil_btn" class="btn btn-success col-12 p-2" href="{{ path('app_register') }}">Rejoignez-nous !</a>
+            </article>
+        </div>
+    </section>
+{% endblock %}

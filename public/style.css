@@ -36,3 +36,46 @@ footer{
     background: #e20e47;
     color: #f2f6fe;
 }
+
+/* --------------------------------------- ACCUEIL --------------------------------------- */
+
+#love_img {
+    background-image: url("https://picsum.photos/1200/600?grayscale");
+    background-size: cover;
+    width: 100%;
+    height: 600px;
+}
+
+#love_img img {
+    width: 100% !important;
+}
+
+#love_div {
+    height: 100%;
+}
+
+#lov_accueil_p {
+    background: rgba(226, 14, 71, 0.58);
+    text-align: justify;
+    color: #fff;
+    line-height: 30px;
+    margin-top: 30px;
+    border-radius: 5px;
+}
+
+#lov_accueil_btn {
+    background: #f2f6fe;
+    color: #e20e47;
+    text-transform: uppercase;
+    border: none;
+    letter-spacing: 3px;
+    margin-top: 10px;
+    transition: all 0.5s;
+}
+
+#lov_accueil_btn:hover {
+    background: #e20e47;
+    color: #f2f6fe;
+    transition: all 0.5s;
+}
+
