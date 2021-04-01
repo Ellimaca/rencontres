@@ -15,10 +15,8 @@ class PhotoProfilType extends AbstractType
     {
         $builder
             ->add('file', FileType::class, [
-                'label' => 'Choisissez une photo',
                 'mapped' => false,
             ])
-            ->add('submit', SubmitType::class, ['label' => 'Envoyer'])
         ;
     }
 

@@ -7,10 +7,13 @@
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
 
+    <div class="container">
     <h1>Créer ton profil</h1>
 
     {{ form_start(profileForm) }}
     {{ form_widget(profileForm) }}
     <button type="submit" class="btn">Créer</button>
     {{ form_end(profileForm) }}
+
+    </div>
 {% endblock %}

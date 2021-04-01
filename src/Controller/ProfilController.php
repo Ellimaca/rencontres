@@ -7,11 +7,14 @@ use App\Entity\PhotoProfil;
 use App\Entity\Profil;
 use App\Entity\User;
 use App\Form\CritereType;
+use App\Form\ModifierProfilType;
 use App\Form\PhotoProfilType;
 use App\Form\ProfilType;
+use App\Repository\CritereRepository;
 use App\Repository\PhotoProfilRepository;
 use App\Repository\ProfilRepository;
 use App\Repository\UserRepository;
+use Cassandra\Type\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -19,55 +22,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\ByteString;
+use function Sodium\add;
 
 class ProfilController extends AbstractController
 {
-    /**
-     * @Route("/create", name="profil_create")
-     */
-    public function create(Request $request,
-                           EntityManagerInterface $manager,
-                           UserRepository $userRepository): Response
-    {
-
-        // Récupère l'utilisateur connecté
-        /** @var User $user */
-        $user = $this->getUser();
-
-        // Récupère l'ID de l'utilisateur connecté
-        $userid = $this->getUser()->getId();
-        // Récupère les infos de l'utilisateur connecté
-        $result = $userRepository->find($userid);
-
-        // Si l'utilisateur a déjà un profil, on le redirige avec un message flash
-        if ($result->getProfil()) {
-            $this->addFlash('warning', 'Vous avez déjà un profil');
-            return $this->redirectToRoute('main_home');
-        }
-        // Sinon, on affiche le formulaire et on crée le profil
-        else {
-            $profil = new Profil();
-            $profil->setUser($user);
-            $profil->setCoeur(false);
-
-            $profilForm = $this->createForm(ProfilType::class, $profil);
-            $profilForm->handleRequest($request);
-
-            if($profilForm->isSubmitted() && $profilForm->isValid()) {
-                $manager->persist($profil);
-                $manager->flush();
-
-                $this->addFlash('success', 'Bienvenue chez LoveNest ! ');
-                return $this->redirectToRoute('profil_ajoutPhoto');
-
-            }
-
-            return $this->render('profil/create.html.twig', [
-                "profileForm" =>$profilForm->createView()
-            ]);
-        }
-
-    }
 
     /**
      * @Route("/detail/{id}", name="profil_detail")
@@ -208,6 +166,7 @@ class ProfilController extends AbstractController
                     /*'dateNaissance' => $criteresUtilisateur->getCriteres()->getAgeRecherches()*/
                 ]);
 
+
             if($criteresCorrespondants) {
                 return $this->render('profil/suggestions.html.twig', [
                     'criteresCorrespondants' => $criteresCorrespondants
@@ -230,23 +189,125 @@ class ProfilController extends AbstractController
      * @Route("/modifierProfil{id}", name="profil_modifier_profil")
      */
 
-    public function modifierProfil($id, ProfilRepository $profilRepository,
-                                   EntityManagerInterface $manager){
+    public function modifierProfil(ProfilRepository $profilRepository,EntityManagerInterface $manager, Request $request){
 
-        //On récupère les informations du profil de l'utilisateur connecté
-        $profil = $profilRepository->find($id);
+        /** @var User $userid */
+        //Je récupère l'id du profil de l'utilisateur connecté
+        $userid = $this->getUser()->getProfil()->getId();
 
+        //je récupère le profil de l'utilisateur connecté
+        $profil =  $profilRepository->find($userid);
 
+        //je crée le form
+        $form = $this->createForm(ProfilType::class, $profil);
 
+        $form->handleRequest($request);
 
+        if($form->isSubmitted() && $form->isValid()) {
 
-        return $this->render('profil/modifierProfil.html.twig', [
-            "profil" => $profil
+            $profil->setCoeur(false);
+
+                $manager->persist($profil);
+                $manager->flush();
+
+            $this->addFlash('success', 'Profil modifié ! ');
+
+                return $this->redirectToRoute('main_home');
+        }
+
+            return $this->render('profil/modifierProfil.html.twig', [
+                'modifForm' => $form->createView()
             ]);
-
-
     }
 
+
+
+    /**
+     * @Route("/modifierCritere{id}", name="profil_modifier_critere")
+     */
+
+    public function modifierCritere(CritereRepository $critereRepository,
+                                    EntityManagerInterface $manager,
+                                    Request $request){
+
+        /** @var User $userid */
+        //Je récupère le profil de l'utilisateur connecté
+        $profil = $this->getUser()->getProfil();
+
+        //Je récupère l'id du critère de l'utilisateur connecté
+        $critere = $this->getUser()->getProfil()->getCriteres();
+
+        //je récupère les critères de l'utilisateur connecté avec l'id critère
+        $criteres =  $critereRepository->find($critere);
+
+        $form = $this->createForm(CritereType::class, $criteres);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+            $profil->setCriteres($criteres);
+
+            $manager->persist($profil);
+            $manager->flush();
+
+            $this->addFlash('success', 'Critères modifiés ! ');
+
+            return $this->redirectToRoute('main_home');
+        }
+
+        return $this->render('profil/modifierCritere.html.twig', [
+            'modifForm' => $form->createView()
+        ]);
+    }
+
+
+    /**
+     * @Route("/create", name="profil_create")
+     */
+    public function create(Request $request,
+                           EntityManagerInterface $manager,
+                           UserRepository $userRepository): Response
+    {
+
+        // Récupère l'utilisateur connecté
+        /** @var User $user */
+        $user = $this->getUser();
+
+        // Récupère l'ID de l'utilisateur connecté
+        $userid = $this->getUser()->getId();
+        // Récupère les infos de l'utilisateur connecté
+        $result = $userRepository->find($userid);
+
+        // Si l'utilisateur a déjà un profil, on le redirige avec un message flash
+        if ($result->getProfil()) {
+            $this->addFlash('warning', 'Vous avez déjà un profil');
+            return $this->redirectToRoute('main_home');
+        }
+        // Sinon, on affiche le formulaire et on crée le profil
+        else {
+            $profil = new Profil();
+            $profil->setUser($user);
+            $profil->setCoeur(false);
+
+            $profilForm = $this->createForm(ProfilType::class, $profil);
+            $profilForm->handleRequest($request);
+
+            if($profilForm->isSubmitted() && $profilForm->isValid()) {
+                $manager->persist($profil);
+                $manager->flush();
+
+                $this->addFlash('success', 'Bienvenue chez LoveNest ! ');
+                return $this->redirectToRoute('profil_ajoutPhoto');
+
+            }
+
+            return $this->render('profil/create.html.twig', [
+                "profileForm" =>$profilForm->createView()
+            ]);
+        }
+
+    }
 
 
 

@@ -6,6 +6,7 @@ use App\Repository\ProfilRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProfilRepository::class)
@@ -20,7 +21,7 @@ class Profil
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     private $dateNaissance;
 
@@ -30,6 +31,10 @@ class Profil
     private $sexe;
 
     /**
+     * @Assert\Length(
+     *     min=5,
+     *     max=5
+     * )
      * @ORM\Column(type="integer")
      */
     private $CodePostal;

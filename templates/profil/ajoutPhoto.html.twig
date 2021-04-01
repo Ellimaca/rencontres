@@ -1,9 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+<div class="container">
 
-    {{ form(photoForm) }}
-
+<h1 class="mb-2">Choisissez votre photo</h1>
+    {{ form_start(photoForm) }}
+    {{ form_widget(photoForm) }}
+    <button class="btn-success btn mt-2">Envoyer</button>
+    {{ form_end(photoForm) }}
+</div>
 {% endblock %}
 
 {% block title %}
