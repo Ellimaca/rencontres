@@ -32,6 +32,8 @@ class ProfilRepository extends ServiceEntityRepository
 
     return $result;
 
+        /*DATE_DIFF(CURRENT\_DATE(), p.date_naissance)/365*/
+
 
     }
 

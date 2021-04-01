@@ -144,12 +144,15 @@ class ProfilController extends AbstractController
         $critereForm->handleRequest($request);
 
         if ($critereForm->isSubmitted() && $critereForm->isValid()) {
-                $critere->addProfil($user->getProfil());
-               $entityManager->persist($critere);
-               $entityManager->flush();
 
-               $this->addFlash('success', 'Critères bien ajoutés à votre profil ! ');
-               return $this->redirectToRoute('main_home');
+                $critere->addProfil($user->getProfil());
+                $entityManager->persist($critere);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Critères bien ajoutés à votre profil ! ');
+                return $this->redirectToRoute('main_home');
+
+
         }
 
         return $this->render('profil/ajoutCritere.html.twig', [
@@ -222,6 +225,28 @@ class ProfilController extends AbstractController
         return $this->render('profil/suggestions.html.twig');
 
     }
+
+    /**
+     * @Route("/modifierProfil{id}", name="profil_modifier_profil")
+     */
+
+    public function modifierProfil($id, ProfilRepository $profilRepository,
+                                   EntityManagerInterface $manager){
+
+        //On récupère les informations du profil de l'utilisateur connecté
+        $profil = $profilRepository->find($id);
+
+
+
+
+
+        return $this->render('profil/modifierProfil.html.twig', [
+            "profil" => $profil
+            ]);
+
+
+    }
+
 
 
 
