@@ -19,6 +19,10 @@ class CritereRepository extends ServiceEntityRepository
         parent::__construct($registry, Critere::class);
     }
 
+
+
+
+
     // /**
     //  * @return Critere[] Returns an array of Critere objects
     //  */

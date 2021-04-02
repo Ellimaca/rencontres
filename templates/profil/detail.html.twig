@@ -7,9 +7,11 @@
     <div class="container mt-4 ">
         <div class="row">
             <div class="col-4">
-                {% for photo in app.user.profil.photoProfils %}
-                    <img class="mb-4" alt="photo" src="../profile/img/{{ photo.nomFichier }}">
-                {% endfor %}
+
+                    {% for photo in app.user.profil.photoProfils %}
+                        <img class="mb-4" alt="photo" src="../profile/img/{{ photo.nomFichier }}">
+                    {% endfor %}
+
             </div>
 
             <div class="col-4">
@@ -20,6 +22,9 @@
                     <p>Ville : {{ profil.ville }}</p>
                     <p>Code Postal : {{ profil.codePostal }}</p>
                     <a href="{{ path('profil_modifier_profil', {id:app.user.id}) }}" class="btn btn-success">Modifier mon profil</a>
+                {% if app.user.profil.photoProfils %}
+                    <a href="{{ path('profil_ajoutPhoto') }}" class="btn btn-success">Ajouter une photo</a>
+                {% endif %}
             </div>
 
 
@@ -29,7 +34,9 @@
 
                 <h1>Mes critères</h1>
                     <div>Sexe recherché : {{ profil.criteres.sexesRecherches }}</div>
-                    <div>Age recherché : {{ profil.criteres.ageRecherches }}</div>
+                    <div>Age recherché minimum: {{ profil.criteres.ageRecherchesMin }}</div>
+                    <div>Age recherché maximum: {{ profil.criteres.ageRecherchesMax }}</div>
+
                     <div>Département recherché : {{ profil.criteres.departementsRecherches }}</div>
                     <a href="{{ path('profil_modifier_critere', {id:app.user.profil.id}) }}" class="btn btn-success">Modifier mes critères</a>
 

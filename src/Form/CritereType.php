@@ -22,12 +22,12 @@ class CritereType extends AbstractType
                     'Femme' => 'Femme',
                     'Homme' => 'Homme',
                     'Non-Binaire' => 'Non-Binaire'
-                ]
-            ])
+                    ]
+                ])
+
             ->add('departementsRecherches')
-            ->add('ageRecherches')
-            ->add('envoyer', SubmitType::class)
-        ;
+            ->add('ageRecherchesMin')
+            ->add('ageRecherchesMax');
     }
 
     public function configureOptions(OptionsResolver $resolver)

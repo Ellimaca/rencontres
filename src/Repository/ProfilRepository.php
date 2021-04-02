@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Critere;
 use App\Entity\Profil;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\AST\Functions\DateDiffFunction;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -34,6 +36,24 @@ class ProfilRepository extends ServiceEntityRepository
 
         /*DATE_DIFF(CURRENT\_DATE(), p.date_naissance)/365*/
 
+
+    }
+
+    public function recupereCriteresCorrespondantsAuUser(Critere $critereDuUser) {
+
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->where('p.sexe = :femme')
+            ->andWhere('p.CodePostal LIKE :departement')
+            ->andWhere('DATE_DIFF(CURRENT_DATE(), p.dateNaissance)/365 >= :ageMin' )
+            ->setParameter('ageMin', $critereDuUser->getAgeRecherchesMin())
+            ->andWhere('DATE_DIFF(CURRENT_DATE(), p.dateNaissance)/365 <= :ageMax' )
+            ->setParameter('ageMax', $critereDuUser->getAgeRecherchesMax())
+            ->setParameter('departement', $critereDuUser->getDepartementsRecherches() . '%')
+            ->setParameter('femme', $critereDuUser->getSexesRecherches());
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->execute();
 
     }
 

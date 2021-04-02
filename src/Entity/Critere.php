@@ -26,6 +26,12 @@ class Critere
     private $sexesRecherches;
 
     /**
+     * @Assert\Length(
+     *     min = 2,
+     *     max = 2,
+     *     minMessage="Veuillez saisir au moins deux chiffres",
+     *     maxMessage="Saisissez deux chiffres svp !"
+     * )
      * @ORM\Column(type="integer", nullable=true)
      */
     private $departementsRecherches;
@@ -37,7 +43,16 @@ class Critere
      * )
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $ageRecherches;
+    private $ageRecherchesMin;
+
+    /**
+     * @Assert\Range(
+     *     min=18,
+     *     minMessage="Pas de mineurs !"
+     * )
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $ageRecherchesMax;
 
     /**
      * @ORM\OneToMany(targetEntity=Profil::class, mappedBy="criteres")
@@ -48,7 +63,6 @@ class Critere
     {
         $this->profils = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -79,17 +93,38 @@ class Critere
         return $this;
     }
 
-    public function getAgeRecherches(): ?int
+    /**
+     * @return mixed
+     */
+    public function getAgeRecherchesMin()
     {
-        return $this->ageRecherches;
+        return $this->ageRecherchesMin;
     }
 
-    public function setAgeRecherches(?int $ageRecherches): self
+    /**
+     * @param mixed $ageRecherchesMin
+     */
+    public function setAgeRecherchesMin($ageRecherchesMin): void
     {
-        $this->ageRecherches = $ageRecherches;
-
-        return $this;
+        $this->ageRecherchesMin = $ageRecherchesMin;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAgeRecherchesMax()
+    {
+        return $this->ageRecherchesMax;
+    }
+
+    /**
+     * @param mixed $ageRecherchesMax
+     */
+    public function setAgeRecherchesMax($ageRecherchesMax): void
+    {
+        $this->ageRecherchesMax = $ageRecherchesMax;
+    }
+
 
     /**
      * @return Collection|Profil[]

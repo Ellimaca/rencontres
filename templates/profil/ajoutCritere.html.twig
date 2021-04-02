@@ -2,7 +2,12 @@
 
 {% block body %}
     <div class="container mt-4">
-        {{ form(critereForm) }}
+
+        {{ form_start(critereForm) }}
+        {{ form_widget(critereForm) }}
+        <button class="btn-success btn mt-2">Valider
+
+        {{ form_end(critereForm)}}
     </div>
 
 {% endblock %}

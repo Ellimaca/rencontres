@@ -1,12 +1,39 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <div class="container">
 <h1>Mes suggestions</h1>
 
-    {% for profil in criteresCorrespondants %}
-        <p>{{ profil.user.pseudo }}</p>
-    {% endfor %}
 
+    {% for profil in criteresCorrespondants %}
+        {% if profil.id != app.user.profil.id %}
+
+            <div class="card" style="width: 18rem;">
+                {% if(profil.PhotoProfils) %}
+
+                    {% for photo in profil.PhotoProfils  %}
+                        <img class="card-img-top" src="../profile/img/{{ PhotoProfil.nomFichier }}" alt="Card image cap">
+                    {% endfor %}
+
+                    {% else %}
+                        <img class="card-img-top" src="https://picsum.photos/200/300" alt="Card image cap">
+                {% endif%}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ profil.user.pseudo }}</h5>
+                    <div class="card-text">
+                        <p>{{ profil.sexe }}</p>
+                        <p>{{ profil.ville }}</p>
+                        <p>{{ profil.dateNaissance|date('d/m/Y') }}</p>
+                    </div>
+                    <a href="#" class="btn btn-primary"><i class="fas fa-heart"></i></a>
+                </div>
+            </div>
+
+        {% endif %}
+    {% endfor %}
+    </div>
 {% endblock %}
 
 {% block title %}

@@ -14,9 +14,11 @@
     </header>
     {% for label, messages in app.flashes %}
         {% for message in messages %}
-            <div class="alert-{{ label }}">
-                {{ message }}
-            </div>
+
+                <div class="text-center p-4 alert-{{ label }}">
+                    <h4>{{ message }}</h4>
+                </div>
+
         {% endfor %}
     {% endfor %}
 

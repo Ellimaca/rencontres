@@ -47,6 +47,7 @@ class ProfilController extends AbstractController
         //on récupère le user connecté
         /** @var User $user */
         $user = $this->getUser();
+        $userId = $this->getUser()->getProfil()->getId();
 
         //on instancie une photo de profil
         $photoProfil = new PhotoProfil();
@@ -76,8 +77,11 @@ class ProfilController extends AbstractController
 
             $this->addFlash('success', 'Merci pour la/les photo(s)! ');
 
+
             if($user->getProfil()->getCriteres()) {
-                return $this->redirectToRoute('profil_detail', ['$user->getProfil()->getId()']);
+                return $this->redirectToRoute('profil_detail', [
+                    'id' => $userId
+                ]);
             }
 
             return $this->redirectToRoute('profil_critere');
@@ -110,7 +114,6 @@ class ProfilController extends AbstractController
                 $this->addFlash('success', 'Critères bien ajoutés à votre profil ! ');
                 return $this->redirectToRoute('main_home');
 
-
         }
 
         return $this->render('profil/ajoutCritere.html.twig', [
@@ -130,11 +133,13 @@ class ProfilController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        //si l'utilisateur a déjà un profil, on le redirige vers le détail deson profil
+        //si l'utilisateur a déjà un profil, on le redirige vers le détail de son profil
         if($user->getProfil()) {
             //on récupère l'id du profil de l'utilisateur connecté
             $userProfilId = $user->getProfil()->getId();
-            return $this->redirectToRoute('profil_detail', ['id' => $userProfilId]);
+            return $this->redirectToRoute('profil_detail', [
+                'id' => $userProfilId
+            ]);
 
         //sinon on le redirige vers la page de création de profil !
         } else {
@@ -147,42 +152,32 @@ class ProfilController extends AbstractController
      * @Route("/suggestions", name="profil_suggestions")
      */
 
-    public function suggestions(ProfilRepository $profilRepository){
-
+    public function suggestions(ProfilRepository $profilRepository, CritereRepository $critereRepository){
         //on récupère le user connecté
         /** @var User $user */
         $user = $this->getUser();
-
         $userId = $user->getProfil()->getId();
-
         if($user->getProfil()->getCriteres()){
+
             //on récupère les critères de l'utilisateur connecté
-            $criteresUtilisateur = $profilRepository->find($userId);
+            $critereUtilisateur =$user->getProfil()->getCriteres();
 
-            //on récupère les critères de tout le monde
-            $criteresCorrespondants = $profilRepository->findBy(
-                ['sexe' => $criteresUtilisateur->getCriteres()->getSexesRecherches(),
-                    'CodePostal' => $criteresUtilisateur->getCriteres()->getDepartementsRecherches(),
-                    /*'dateNaissance' => $criteresUtilisateur->getCriteres()->getAgeRecherches()*/
-                ]);
+            $profils = $profilRepository->recupereCriteresCorrespondantsAuUser($critereUtilisateur);
 
 
-            if($criteresCorrespondants) {
+            if($profils) {
                 return $this->render('profil/suggestions.html.twig', [
-                    'criteresCorrespondants' => $criteresCorrespondants
-                    ]);
+                    'criteresCorrespondants' => $profils
+                ]);
             } else {
                 $this->addFlash('warning', "Désolé, vous n'avez aucune suggestion");
             }
-
 
         } else {
             $this->addFlash('warning', "Vous n'avez pas de suggestions, veuillez renseigner vos critères");
             return $this->redirectToRoute('profil_critere');
         }
-
         return $this->render('profil/suggestions.html.twig');
-
     }
 
     /**
@@ -205,7 +200,7 @@ class ProfilController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()) {
 
-            $profil->setCoeur(false);
+                $profil->setCoeur(false);
 
                 $manager->persist($profil);
                 $manager->flush();
