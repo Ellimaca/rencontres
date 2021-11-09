@@ -8,31 +8,30 @@
         <div class="row">
             <div class="col-4">
 
-                    {% for photo in app.user.profil.photoProfils %}
+                    {% for photo in profil.photoProfils %}
                         <img class="mb-4" alt="photo" src="../profile/img/{{ photo.nomFichier }}">
                     {% endfor %}
 
             </div>
 
             <div class="col-4">
-                <h1>Mon profil</h1>
-                    <p>Pseudo : {{ app.user.pseudo }}</p>
+                <h1>Profil de {{ profil.user.pseudo }}</h1>
+                    <p>Pseudo : {{ profil.user.pseudo }}</p>
                     <p>Date de naissance : {{ profil.dateNaissance|date('d/m/Y') }}</p>
                     <p>Sexe : {{ profil.sexe }}</p>
                     <p>Ville : {{ profil.ville }}</p>
                     <p>Code Postal : {{ profil.codePostal }}</p>
-                    <a href="{{ path('profil_modifier_profil', {id:app.user.id}) }}" class="btn btn-success">Modifier mon profil</a>
+                    <a href="{{ path('profil_modifier_profil', {id:app.user.profil.id}) }}" class="btn btn-success">Modifier mon profil</a>
                 {% if app.user.profil.photoProfils %}
                     <a href="{{ path('profil_ajoutPhoto') }}" class="btn btn-success">Ajouter une photo</a>
                 {% endif %}
             </div>
 
-
             <div class="col-4">
 
                 {% if(app.user.profil.criteres) %}
 
-                <h1>Mes critères</h1>
+                <h1>Critères</h1>
                     <div>Sexe recherché : {{ profil.criteres.sexesRecherches }}</div>
                     <div>Age recherché minimum: {{ profil.criteres.ageRecherchesMin }}</div>
                     <div>Age recherché maximum: {{ profil.criteres.ageRecherchesMax }}</div>

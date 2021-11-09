@@ -18,6 +18,7 @@ use Cassandra\Type\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -148,7 +149,7 @@ class ProfilController extends AbstractController
 
     }
 
-    /**
+/*    /**
      * @Route("/suggestions", name="profil_suggestions")
      */
 
@@ -181,26 +182,22 @@ class ProfilController extends AbstractController
     }
 
     /**
-     * @Route("/modifierProfil{id}", name="profil_modifier_profil")
+     * @Route("/modifierProfil", name="profil_modifier_profil")
      */
 
-    public function modifierProfil(ProfilRepository $profilRepository,EntityManagerInterface $manager, Request $request){
+    public function modifierProfil(ProfilRepository $profilRepository,
+                                   EntityManagerInterface $manager,
+                                   Request $request){
 
-        /** @var User $userid */
-        //Je récupère l'id du profil de l'utilisateur connecté
-        $userid = $this->getUser()->getProfil()->getId();
+        //Je récupère le profil de l'utilisateur connecté
+        $profil = $this->getUser()->getProfil();
 
-        //je récupère le profil de l'utilisateur connecté
-        $profil =  $profilRepository->find($userid);
-
-        //je crée le form
+        //je crée le form et j'associe mon formulaire et mon profil ensemble
         $form = $this->createForm(ProfilType::class, $profil);
 
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-
-                $profil->setCoeur(false);
 
                 $manager->persist($profil);
                 $manager->flush();
@@ -218,14 +215,13 @@ class ProfilController extends AbstractController
 
 
     /**
-     * @Route("/modifierCritere{id}", name="profil_modifier_critere")
+     * @Route("/modifierCritere", name="profil_modifier_critere")
      */
 
     public function modifierCritere(CritereRepository $critereRepository,
                                     EntityManagerInterface $manager,
                                     Request $request){
 
-        /** @var User $userid */
         //Je récupère le profil de l'utilisateur connecté
         $profil = $this->getUser()->getProfil();
 
@@ -235,6 +231,7 @@ class ProfilController extends AbstractController
         //je récupère les critères de l'utilisateur connecté avec l'id critère
         $criteres =  $critereRepository->find($critere);
 
+        //je crée le formulaire en associant le formulaire Critère et les critères
         $form = $this->createForm(CritereType::class, $criteres);
 
         $form->handleRequest($request);
@@ -269,10 +266,11 @@ class ProfilController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        // Récupère l'ID de l'utilisateur connecté
-        $userid = $this->getUser()->getId();
+        // Récupère l'utilisateur connecté
+        $user = $this->getUser();
+
         // Récupère les infos de l'utilisateur connecté
-        $result = $userRepository->find($userid);
+        $result = $userRepository->find($user);
 
         // Si l'utilisateur a déjà un profil, on le redirige avec un message flash
         if ($result->getProfil()) {
@@ -283,7 +281,6 @@ class ProfilController extends AbstractController
         else {
             $profil = new Profil();
             $profil->setUser($user);
-            $profil->setCoeur(false);
 
             $profilForm = $this->createForm(ProfilType::class, $profil);
             $profilForm->handleRequest($request);
@@ -303,7 +300,6 @@ class ProfilController extends AbstractController
         }
 
     }
-
 
 
 }

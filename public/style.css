@@ -1,5 +1,10 @@
+@font-face {
+    font-family: "Open Sans Condensed";
+}
+
 html, body {
     background-color: #f2f6fe !important;
+    font-family: 'Open Sans Condensed', sans-serif;
 }
 
 body{
@@ -29,10 +34,14 @@ footer{
     background: #e20e47;
 }
 
+#love_hello {
+    color: white;
+}
 /* --------------------------------------- FOOTER --------------------------------------- */
 footer{
     margin-top:auto;
     min-height:50px;
+    width:100%;
     background: #e20e47;
     color: #f2f6fe;
 }
@@ -78,3 +87,4 @@ footer{
     color: #f2f6fe;
     transition: all 0.5s;
 }
+

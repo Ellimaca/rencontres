@@ -32,7 +32,8 @@ class AppFixtures extends Fixture
             $manager->persist($user);
 
             //On hydrate les propriétés des critères
-            $critere->setAgeRecherches($faker->numberBetween(18,100));
+            $critere->setAgeRecherchesMin($faker->numberBetween(18,80));
+            $critere->setAgeRecherchesMax($faker->numberBetween(20,100));
             $critere->setDepartementsRecherches($faker->numberBetween(00000,99999));
             $critere->setSexesRecherches($faker->randomElement(['femme', 'homme', 'non-binaire']));
 
@@ -41,7 +42,6 @@ class AppFixtures extends Fixture
 
             //On hydrate les propriétés du profil
             $profil->setCodePostal($faker->numberBetween(00001, 99999));
-            $profil->setCoeur($faker->boolean(10));
             $profil->setDateNaissance($faker->dateTimeBetween('-100 years', '-8 years'));
             $profil->setSexe($faker->randomElement(['femme', 'homme', 'non-binaire']));
             $profil->setVille($faker->city);

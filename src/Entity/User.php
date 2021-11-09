@@ -48,7 +48,6 @@ class User implements UserInterface
      */
     private $profil;
 
-
     public function getId(): ?int
     {
         return $this->id;

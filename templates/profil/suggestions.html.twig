@@ -2,38 +2,48 @@
 
 {% block body %}
 
-    <div class="container">
-<h1>Mes suggestions</h1>
+<div class="container">
+    <h1>Mes suggestions</h1>
 
-
+    <div class="row">
+        <div class="col-md-3">
     {% for profil in criteresCorrespondants %}
         {% if profil.id != app.user.profil.id %}
 
-            <div class="card" style="width: 18rem;">
-                {% if(profil.PhotoProfils) %}
+
+
+                <div class="card mt-3 mb-3" style="width: 18rem;">
+                    {% if(profil.PhotoProfils()) %}
 
                     {% for photo in profil.PhotoProfils  %}
-                        <img class="card-img-top" src="../profile/img/{{ PhotoProfil.nomFichier }}" alt="Card image cap">
+                        <img class="card-img-top" src="./profile/img/{{ photo.nomFichier }}"
+                             width="20" height="400" alt="photoProfil">
                     {% endfor %}
-
-                    {% else %}
+                {% else %}
                         <img class="card-img-top" src="https://picsum.photos/200/300" alt="Card image cap">
                 {% endif%}
 
-                <div class="card-body">
-                    <h5 class="card-title">{{ profil.user.pseudo }}</h5>
+
+                <div class="card-body mt-3 mb-3">
+                    <h5 class="card-title"><a href="{{ path('profil_detail', {id:profil.id}) }}">{{ profil.user.pseudo }}</a></h5>
                     <div class="card-text">
                         <p>{{ profil.sexe }}</p>
                         <p>{{ profil.ville }}</p>
                         <p>{{ profil.dateNaissance|date('d/m/Y') }}</p>
                     </div>
-                    <a href="#" class="btn btn-primary"><i class="fas fa-heart"></i></a>
+                    <a href="{{ path('profil_detail', {id:profil.id}) }}" class="btn btn-primary">
+                        Voir le profil
+                    </a>
+                    <input type="hidden" id="profil_id" value="{{ profil.id }}">
                 </div>
             </div>
-
         {% endif %}
     {% endfor %}
+        </div>
     </div>
+</div>
+
+
 {% endblock %}
 
 {% block title %}

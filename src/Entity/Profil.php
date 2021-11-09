@@ -45,11 +45,6 @@ class Profil
     private $Ville;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $coeur;
-
-    /**
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="profil", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -122,19 +117,7 @@ class Profil
 
         return $this;
     }
-
-
-    public function getCoeur(): ?bool
-    {
-        return $this->coeur;
-    }
-
-    public function setCoeur(bool $coeur): self
-    {
-        $this->coeur = $coeur;
-
-        return $this;
-    }
+    
 
     public function getUser(): ?User
     {
